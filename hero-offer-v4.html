@@ -1,0 +1,560 @@
+<!-- =========================
+     MHH HERO OFFER v4 (RTL)
+     Redesign of v3: image-led media column with overlaid trust card,
+     clearer price hierarchy, savings meter, feature tiles.
+     Namespace: mhh-ho4-
+     All tokens are scoped to the wrapper (nothing leaks to :root) and every
+     global --mhh-* variable has a fallback, so the block also works standalone.
+========================= -->
+
+<style>
+.mhh-ho4{
+  /* palette */
+  --ho4-navy: var(--mhh-navy, #354859);
+  --ho4-teal: #8EC9C4;
+  --ho4-teal-deep: #5FA9A3;
+  --ho4-mint: #F2FAF9;
+  --ho4-sale: #F0605D;
+  --ho4-green: #1F9D7A;
+  --ho4-line: rgba(53,72,89,.10);
+
+  /* type */
+  --ho4-font: var(--mhh-font, "Cairo", "Tajawal", system-ui, sans-serif);
+  --ho4-w5: var(--mhh-w-500, 500);
+  --ho4-w6: var(--mhh-w-600, 600);
+  --ho4-w7: var(--mhh-w-700, 700);
+  --ho4-w8: var(--mhh-w-800, 800);
+
+  /* shape */
+  --ho4-r-lg: 28px;
+  --ho4-r-md: 20px;
+  --ho4-r-sm: 14px;
+  --ho4-shadow: 0 1px 2px rgba(53,72,89,.06), 0 18px 48px -12px rgba(53,72,89,.18);
+
+  direction: rtl;
+  font-family: var(--ho4-font);
+  color: var(--ho4-navy);
+  width: 100%;
+  padding: 8px 0;
+}
+.mhh-ho4 *, .mhh-ho4 *::before, .mhh-ho4 *::after{ box-sizing: border-box; }
+.mhh-ho4 :where(p){ margin: 0; }
+
+/* ===== Stage ===== */
+.mhh-ho4-stage{
+  position: relative;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 36px;
+  background:
+    radial-gradient(700px 380px at 100% 0%, rgba(142,201,196,.30), transparent 60%),
+    radial-gradient(600px 340px at 0% 100%, rgba(142,201,196,.18), transparent 60%),
+    linear-gradient(180deg, #F6FBFB 0%, #FFFFFF 100%);
+  border: 1px solid rgba(142,201,196,.28);
+  box-shadow: 0 30px 80px -30px rgba(53,72,89,.25);
+  overflow: hidden;
+  isolation: isolate;
+}
+/* faint dotted texture */
+.mhh-ho4-stage::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(53,72,89,.07) 1px, transparent 1px);
+  background-size: 18px 18px;
+  -webkit-mask-image: radial-gradient(600px 300px at 15% 10%, #000, transparent 70%);
+          mask-image: radial-gradient(600px 300px at 15% 10%, #000, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.mhh-ho4-grid{
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); /* RTL: media right, offer left */
+  gap: 20px;
+  align-items: stretch;
+}
+
+/* ===== RIGHT: Media ===== */
+.mhh-ho4-media{
+  position: relative;
+  min-height: 520px;
+  border-radius: var(--ho4-r-lg);
+  overflow: hidden;
+  background: var(--ho4-mint);
+  box-shadow: var(--ho4-shadow);
+  outline: 1px solid rgba(255,255,255,.6);
+  outline-offset: -1px;
+}
+.mhh-ho4-media > img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+  transition: transform .6s cubic-bezier(.2,.7,.2,1);
+}
+/* bottom fade so the trust card sits on a calm surface */
+.mhh-ho4-media::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(53,72,89,0) 45%, rgba(53,72,89,.55) 100%),
+    linear-gradient(135deg, rgba(255,255,255,.14), transparent 40%);
+  pointer-events: none;
+}
+@media (hover:hover){
+  .mhh-ho4-media:hover > img{ transform: scale(1.04); }
+}
+
+/* savings seal on the image */
+.mhh-ho4-seal{
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  color: #fff;
+  background: radial-gradient(circle at 30% 25%, #FF8A86, var(--ho4-sale) 70%);
+  box-shadow: 0 10px 24px -6px rgba(240,96,93,.55), 0 0 0 5px rgba(255,255,255,.55);
+  transform: rotate(-8deg);
+  line-height: 1.1;
+}
+.mhh-ho4-seal small{ font-size: 11px; font-weight: var(--ho4-w6); opacity: .92; }
+.mhh-ho4-seal b{ font-size: 22px; font-weight: var(--ho4-w8); }
+
+/* trust card (glass) */
+.mhh-ho4-trust{
+  position: absolute;
+  z-index: 2;
+  inset-inline: 14px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--ho4-r-md);
+  background: rgba(255,255,255,.86);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+          backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgba(255,255,255,.7);
+  box-shadow: 0 12px 30px -10px rgba(22,33,43,.35);
+}
+.mhh-ho4-trust .logo{
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(142,201,196,.45);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 16px -6px rgba(53,72,89,.3);
+}
+.mhh-ho4-trust .logo img{ width: 36px; height: auto; display: block; }
+.mhh-ho4-trust .txt{ min-width: 0; text-align: right; }
+.mhh-ho4-trust .name{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.125rem;
+  font-weight: var(--ho4-w8);
+  line-height: 1.3;
+}
+.mhh-ho4-trust .name svg{ width: 18px; height: 18px; flex: 0 0 18px; }
+.mhh-ho4-trust .role{
+  margin-top: 2px;
+  font-size: .8125rem;
+  font-weight: var(--ho4-w7);
+  color: var(--ho4-teal-deep);
+  line-height: 1.6;
+}
+.mhh-ho4-trust .desc{
+  font-size: .75rem;
+  font-weight: var(--ho4-w5);
+  color: rgba(53,72,89,.72);
+  line-height: 1.6;
+}
+
+/* ===== LEFT: Offer ===== */
+.mhh-ho4-offer{
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border-radius: var(--ho4-r-lg);
+  background: #fff;
+  border: 1px solid rgba(142,201,196,.28);
+  box-shadow: var(--ho4-shadow);
+  text-align: right;
+}
+
+.mhh-ho4-tags{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.mhh-ho4-tag{
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: var(--ho4-w7);
+  line-height: 1.4;
+  color: var(--ho4-navy);
+  background: rgba(142,201,196,.16);
+  border: 1px solid rgba(142,201,196,.40);
+}
+.mhh-ho4-tag svg{ width: 14px; height: 14px; }
+.mhh-ho4-tag.is-sale{
+  color: var(--ho4-sale);
+  background: rgba(240,96,93,.08);
+  border-color: rgba(240,96,93,.28);
+}
+.mhh-ho4-dot{
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ho4-sale);
+}
+.mhh-ho4-dot::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--ho4-sale);
+  animation: mhh-ho4-ping 1.8s cubic-bezier(0,0,.2,1) infinite;
+}
+@keyframes mhh-ho4-ping{
+  75%, 100%{ transform: scale(2.4); opacity: 0; }
+}
+
+/* price panel */
+.mhh-ho4-price{
+  position: relative;
+  padding: 20px;
+  border-radius: var(--ho4-r-md);
+  background:
+    radial-gradient(400px 160px at 100% 0%, rgba(142,201,196,.28), transparent 70%),
+    var(--ho4-mint);
+  border: 1px solid rgba(142,201,196,.30);
+  overflow: hidden;
+}
+.mhh-ho4-price .label{
+  font-size: .8125rem;
+  font-weight: var(--ho4-w7);
+  color: rgba(53,72,89,.70);
+}
+.mhh-ho4-amountRow{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 6px 16px;
+  margin-top: 4px;
+}
+.mhh-ho4-amount{
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1;
+}
+.mhh-ho4-amount .num{
+  font-size: clamp(3rem, 2.2rem + 3vw, 4.25rem);
+  font-weight: var(--ho4-w8);
+  letter-spacing: -1px;
+  color: var(--ho4-navy);
+  font-variant-numeric: tabular-nums;
+}
+.mhh-ho4-amount .cur{
+  font-size: 1.125rem;
+  font-weight: var(--ho4-w8);
+}
+.mhh-ho4-amount .per{
+  font-size: .875rem;
+  font-weight: var(--ho4-w6);
+  color: rgba(53,72,89,.6);
+}
+.mhh-ho4-old{
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 6px;
+  font-size: .75rem;
+  font-weight: var(--ho4-w6);
+  color: rgba(53,72,89,.55);
+  line-height: 1.4;
+}
+.mhh-ho4-old del{
+  font-size: 1.125rem;
+  font-weight: var(--ho4-w8);
+  color: rgba(53,72,89,.50);
+  text-decoration-color: var(--ho4-sale);
+  text-decoration-thickness: 2px;
+}
+.mhh-ho4-monthly{
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .8125rem;
+  font-weight: var(--ho4-w7);
+  color: var(--ho4-navy);
+}
+.mhh-ho4-monthly b{ color: var(--ho4-teal-deep); }
+
+/* savings meter */
+.mhh-ho4-meter{ margin-top: 16px; }
+.mhh-ho4-meterHead{
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: .75rem;
+  font-weight: var(--ho4-w7);
+}
+.mhh-ho4-meterHead .save{ color: var(--ho4-green); }
+.mhh-ho4-meterHead .pct{ color: rgba(53,72,89,.6); }
+.mhh-ho4-bar{
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: repeating-linear-gradient(-45deg, rgba(31,157,122,.16) 0 6px, rgba(31,157,122,.08) 6px 12px);
+  overflow: hidden;
+}
+/* filled part = what you pay (149 / 285 ≈ 52%), rest = saved */
+.mhh-ho4-bar span{
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 52%;
+  border-radius: inherit;
+  background: linear-gradient(to left, var(--ho4-teal), var(--ho4-teal-deep));
+}
+.mhh-ho4-legend{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: .6875rem;
+  font-weight: var(--ho4-w6);
+  color: rgba(53,72,89,.55);
+}
+
+.mhh-ho4-compare{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 10px 12px;
+  border-radius: var(--ho4-r-sm);
+  background: #fff;
+  border: 1px dashed rgba(31,157,122,.35);
+  font-size: .8125rem;
+  font-weight: var(--ho4-w7);
+  color: var(--ho4-green);
+  line-height: 1.5;
+}
+.mhh-ho4-compare svg{ width: 18px; height: 18px; flex: 0 0 18px; }
+
+/* features */
+.mhh-ho4-featTitle{
+  margin: 22px 0 12px;
+  font-size: .875rem;
+  font-weight: var(--ho4-w8);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mhh-ho4-featTitle::after{
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to left, var(--ho4-line), transparent);
+}
+.mhh-ho4-features{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.mhh-ho4-features li{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--ho4-r-sm);
+  background: #FAFCFC;
+  border: 1px solid var(--ho4-line);
+  font-size: .8125rem;
+  font-weight: var(--ho4-w6);
+  line-height: 1.5;
+  transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
+}
+@media (hover:hover){
+  .mhh-ho4-features li:hover{
+    background: var(--ho4-mint);
+    border-color: rgba(142,201,196,.55);
+    transform: translateY(-1px);
+  }
+}
+.mhh-ho4-ic{
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  color: var(--ho4-teal-deep);
+  background: rgba(142,201,196,.20);
+}
+.mhh-ho4-ic svg{ width: 16px; height: 16px; display: block; }
+
+/* ===== Responsive ===== */
+@media (max-width: 920px){
+  .mhh-ho4-stage{ padding: 14px; border-radius: 28px; }
+  .mhh-ho4-grid{ grid-template-columns: 1fr; gap: 14px; }
+  .mhh-ho4-media{ min-height: 440px; }
+  .mhh-ho4-offer{ padding: 18px; }
+}
+@media (max-width: 480px){
+  .mhh-ho4-stage{ padding: 10px; border-radius: 24px; }
+  .mhh-ho4-media{ min-height: 400px; border-radius: 22px; }
+  .mhh-ho4-seal{ width: 72px; height: 72px; top: 12px; left: 12px; }
+  .mhh-ho4-seal b{ font-size: 19px; }
+  .mhh-ho4-trust{ inset-inline: 10px; bottom: 10px; padding: 12px; gap: 12px; }
+  .mhh-ho4-trust .logo{ flex-basis: 48px; width: 48px; height: 48px; }
+  .mhh-ho4-trust .logo img{ width: 30px; }
+  .mhh-ho4-offer{ padding: 14px; border-radius: 22px; }
+  .mhh-ho4-price{ padding: 16px; }
+  .mhh-ho4-tags{ justify-content: flex-start; }
+  .mhh-ho4-features{ grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .mhh-ho4 *{ animation: none !important; transition: none !important; }
+}
+</style>
+
+<section class="mhh-ho4" aria-label="عرض الاشتراك السنوي">
+  <div class="mhh-ho4-stage">
+    <div class="mhh-ho4-grid">
+
+      <!-- RIGHT: Image + trust -->
+      <div class="mhh-ho4-media">
+        <img src="https://storage.googleapis.com/msgsndr/25e9iURIgsa3JiXdcvsZ/media/6949953badf7e4f701c4bd2b.jpg" alt="نهى أبو ستة" loading="lazy">
+
+        <div class="mhh-ho4-seal" aria-hidden="true">
+          <small>وفّر</small>
+          <b>136$</b>
+        </div>
+
+        <div class="mhh-ho4-trust">
+          <div class="logo">
+            <img src="https://storage.googleapis.com/msgsndr/25e9iURIgsa3JiXdcvsZ/media/694ac6a47d382a6af6224b70.png" alt="Mental Health Hub" loading="lazy">
+          </div>
+          <div class="txt">
+            <p class="name">
+              نهى أبو ستة
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#5FA9A3" d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1 2.8 1 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9-2.5-1.7 1-2.8-1-2.8 2.5-1.7.9-2.9 3 .2z"/><path fill="#fff" d="M10.6 15.4 7.8 12.6l1.1-1.1 1.7 1.7 4.5-4.5 1.1 1.1z"/></svg>
+            </p>
+            <p class="role">مدربة تربية للأطفال والمراهقين</p>
+            <p class="desc">خبرة عملية مع آلاف الأسر في مصر والشرق الأوسط</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEFT: Offer -->
+      <div class="mhh-ho4-offer">
+
+        <div class="mhh-ho4-tags">
+          <span class="mhh-ho4-tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2zm12 8H5v9h14zM5 8h14V6H5z"/></svg>
+            اشتراك سنوي
+          </span>
+          <span class="mhh-ho4-tag is-sale">
+            <span class="mhh-ho4-dot" aria-hidden="true"></span>
+            عرض خاص لفترة محدودة
+          </span>
+        </div>
+
+        <div class="mhh-ho4-price">
+          <p class="label">سعر الاشتراك الآن</p>
+
+          <div class="mhh-ho4-amountRow">
+            <div class="mhh-ho4-amount">
+              <span class="num">149</span>
+              <span class="cur">دولار</span>
+              <span class="per">/ سنة</span>
+            </div>
+            <div class="mhh-ho4-old">
+              بدلًا من
+              <del>285 دولار</del>
+            </div>
+          </div>
+
+          <p class="mhh-ho4-monthly">يعني حوالي <b>12.4 دولار</b> في الشهر فقط</p>
+
+          <div class="mhh-ho4-meter">
+            <div class="mhh-ho4-meterHead">
+              <span class="save">وفّر 136 دولار</span>
+              <span class="pct">خصم أكثر من 45%</span>
+            </div>
+            <div class="mhh-ho4-bar" role="img" aria-label="تدفع 149 دولار من أصل 285 دولار"><span></span></div>
+            <div class="mhh-ho4-legend">
+              <span>تدفع 149$</span>
+              <span>السعر الأصلي 285$</span>
+            </div>
+          </div>
+
+          <div class="mhh-ho4-compare">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20m4.3 6.3-5.8 5.8-2.8-2.8-1.4 1.4 4.2 4.2 7.2-7.2z"/></svg>
+            أوفر بكثير من الاشتراك في الدورات منفردة
+          </div>
+        </div>
+
+        <p class="mhh-ho4-featTitle">إيه اللي هتاخده مع الاشتراك</p>
+
+        <ul class="mhh-ho4-features">
+          <li>
+            <span class="mhh-ho4-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2zm12 8H5v9h14z"/></svg></span>
+            اشتراك لمدة 12 شهر
+          </li>
+          <li>
+            <span class="mhh-ho4-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 21h6v-1H9zm3-19a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2"/></svg></span>
+            محتوى عملي قابل للتطبيق
+          </li>
+          <li>
+            <span class="mhh-ho4-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h4v16H4zm6 0h4v16h-4zm5.7 1.2 3.9-1 4 15.5-3.9 1z"/></svg></span>
+            مكتبة متزايدة خلال سنة الاشتراك
+          </li>
+          <li>
+            <span class="mhh-ho4-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-6v2h3v2H8v-2h3v-2H5a2 2 0 0 1-2-2zm2 0v10h14V5z"/></svg></span>
+            مشاهدة من أي مكان وعلى أي جهاز
+          </li>
+          <li>
+            <span class="mhh-ho4-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20m1 5h-2v6l5 3 1-1.7-4-2.4z"/></svg></span>
+            مرونة في التعلم حسب جدولك
+          </li>
+          <li>
+            <span class="mhh-ho4-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8m7 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6M1 20c0-3.3 3.6-6 8-6s8 2.7 8 6v1H1zm17 1v-1c0-1.9-.8-3.6-2.1-4.9 3.6.2 7.1 2 7.1 4.9v1z"/></svg></span>
+            الانضمام إلى مجتمع الأكاديمية
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</section>
