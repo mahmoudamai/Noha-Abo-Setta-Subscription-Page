@@ -390,6 +390,8 @@
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
+/* odd item count: last tile spans the full row */
+.mhh-ho4-features li:last-child:nth-child(odd){ grid-column: 1 / -1; }
 .mhh-ho4-features li{
   display: flex;
   align-items: center;
@@ -548,10 +550,6 @@
           <li>
             <span class="mhh-ho4-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20m1 5h-2v6l5 3 1-1.7-4-2.4z"/></svg></span>
             مرونة في التعلم حسب جدولك
-          </li>
-          <li>
-            <span class="mhh-ho4-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8m7 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6M1 20c0-3.3 3.6-6 8-6s8 2.7 8 6v1H1zm17 1v-1c0-1.9-.8-3.6-2.1-4.9 3.6.2 7.1 2 7.1 4.9v1z"/></svg></span>
-            الانضمام إلى مجتمع الأكاديمية
           </li>
         </ul>
 
